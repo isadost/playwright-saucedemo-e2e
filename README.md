@@ -52,6 +52,17 @@ SauceDemo'nun `problem_user` hesabında bulunan hatalar `tests/known-bugs.spec.t
 | BUG-04 | Ürün detayı  | Ürün adına tıklayınca o ürünün sayfası açılır | Farklı bir ürünün sayfası açılıyor             |
 | BUG-05 | Checkout     | Soyad alanına yazılan metin alanda kalır      | Soyad alanı yazılanı tutmuyor                  |
 
+## Erişilebilirlik bulguları
+
+Beş sayfa [axe-core](https://github.com/dequelabs/axe-core) ile WCAG 2.1 A/AA ve axe "best practice" kurallarına göre taranır. **WCAG 2.1 A/AA ihlali bulunmadı.** Best practice kurallarında bulunan ihlaller `src/data/a11y-known.ts` dosyasında belgelendi; testler yalnızca bu listede olmayan yeni bir ihlal çıkarsa başarısız olur.
+
+| Kural                  | Sayfalar     | Etki                                                                    |
+| ---------------------- | ------------ | ----------------------------------------------------------------------- |
+| `page-has-heading-one` | Tüm sayfalar | Sayfada `<h1>` yok; ekran okuyucu kullanıcıları ana başlığa atlayamıyor |
+| `region`               | Giriş        | İçeriğin bir kısmı landmark dışında; bölümler arası gezinme zorlaşıyor  |
+
+Otomatik tarama erişilebilirlik sorunlarının yalnızca bir kısmını yakalar. Klavyeyle gezinme ve ekran okuyucu deneyimi ayrıca elle test edilmelidir.
+
 ## Kurulum
 
 ```bash
