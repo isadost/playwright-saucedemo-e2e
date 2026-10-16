@@ -51,23 +51,23 @@ tests/
 
 SauceDemo'nun `problem_user` ve `visual_user` hesaplarında bulunan hatalar `tests/known-bugs.spec.ts` ve `tests/visual.spec.ts` dosyalarında belgelendi.
 
-| Kod | Alan | Beklenen | Gözlenen |
-|---|---|---|---|
-| BUG-01 | Ürün listesi | Her ürün kendi görselini gösterir | Ürünler aynı görseli paylaşıyor |
-| BUG-02 | Sıralama | Z→A seçilince liste tersine sıralanır | Liste beklenen sıraya girmiyor |
-| BUG-03 | Sepet | 6 ürünün hepsi sepete eklenir | Bazı ürünlerin "Add to cart" butonu çalışmıyor |
-| BUG-04 | Ürün detayı | Ürün adına tıklayınca o ürünün sayfası açılır | Farklı bir ürünün sayfası açılıyor |
-| BUG-05 | Checkout | Soyad alanına yazılan metin alanda kalır | Soyad alanı yazılanı tutmuyor |
-| BUG-06 | Görünüm | `visual_user` ürün listesi standart kullanıcıyla aynı görünür | Ekran görüntüsü standart kullanıcının referansından farklı |
+| Kod    | Alan         | Beklenen                                                      | Gözlenen                                                   |
+| ------ | ------------ | ------------------------------------------------------------- | ---------------------------------------------------------- |
+| BUG-01 | Ürün listesi | Her ürün kendi görselini gösterir                             | Ürünler aynı görseli paylaşıyor                            |
+| BUG-02 | Sıralama     | Z→A seçilince liste tersine sıralanır                         | Liste beklenen sıraya girmiyor                             |
+| BUG-03 | Sepet        | 6 ürünün hepsi sepete eklenir                                 | Bazı ürünlerin "Add to cart" butonu çalışmıyor             |
+| BUG-04 | Ürün detayı  | Ürün adına tıklayınca o ürünün sayfası açılır                 | Farklı bir ürünün sayfası açılıyor                         |
+| BUG-05 | Checkout     | Soyad alanına yazılan metin alanda kalır                      | Soyad alanı yazılanı tutmuyor                              |
+| BUG-06 | Görünüm      | `visual_user` ürün listesi standart kullanıcıyla aynı görünür | Ekran görüntüsü standart kullanıcının referansından farklı |
 
 ## Erişilebilirlik bulguları
 
 Beş sayfa [axe-core](https://github.com/dequelabs/axe-core) ile WCAG 2.1 A/AA ve axe "best practice" kurallarına göre taranır. **WCAG 2.1 A/AA ihlali bulunmadı.** Best practice kurallarında bulunan ihlaller `src/data/a11y-known.ts` dosyasında belgelendi; testler yalnızca bu listede olmayan yeni bir ihlal çıkarsa başarısız olur.
 
-| Kural | Sayfalar | Etki |
-|---|---|---|
+| Kural                  | Sayfalar     | Etki                                                                    |
+| ---------------------- | ------------ | ----------------------------------------------------------------------- |
 | `page-has-heading-one` | Tüm sayfalar | Sayfada `<h1>` yok; ekran okuyucu kullanıcıları ana başlığa atlayamıyor |
-| `region` | Giriş | İçeriğin bir kısmı landmark dışında; bölümler arası gezinme zorlaşıyor |
+| `region`               | Giriş        | İçeriğin bir kısmı landmark dışında; bölümler arası gezinme zorlaşıyor  |
 
 Otomatik tarama erişilebilirlik sorunlarının yalnızca bir kısmını yakalar. Klavyeyle gezinme ve ekran okuyucu deneyimi ayrıca elle test edilmelidir.
 

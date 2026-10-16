@@ -7,10 +7,14 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  test:
+  quality:
+    name: Lint ve format
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
 
@@ -27,16 +31,100 @@ jobs:
           npm run lint
           npm run format:check
 
-      - name: Playwright tarayıcısını kur
-        run: npx playwright install --with-deps chromium
+  test:
+    name: Testler (${{ matrix.project }})
+    needs: quality
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      # Bir tarayıcı kırılsa da diğerleri sonuna kadar koşsun
+      fail-fast: false
+      matrix:
+        project: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Bağımlılıkları kur
+        run: npm ci
+
+      # setup projesi Chromium ile çalıştığı için her işte Chromium da kurulur
+      - name: Tarayıcıları kur
+        run: npx playwright install --with-deps chromium ${{ matrix.project }}
 
       - name: Testleri çalıştır
-        run: npx playwright test
+        run: npx playwright test --project=${{ matrix.project }}
+        env:
+          PLAYWRIGHT_BLOB_OUTPUT_NAME: report-${{ matrix.project }}.zip
+
+      - name: Blob raporunu yükle
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: blob-report-${{ matrix.project }}
+          path: blob-report/
+          retention-days: 1
+
+  report:
+    name: Raporu birleştir
+    needs: test
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Bağımlılıkları kur
+        run: npm ci
+
+      - name: Blob raporlarını indir
+        uses: actions/download-artifact@v7
+        with:
+          path: all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Tek HTML raporda birleştir
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
 
       - name: HTML raporunu yükle
-        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v6
         with:
           name: playwright-report
           path: playwright-report/
           retention-days: 14
+
+      - name: GitHub Pages için hazırla
+        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: playwright-report/
+
+  deploy:
+    name: GitHub Pages'e yayınla
+    needs: report
+    if: ${{ !cancelled() && needs.report.result == 'success' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - name: Yayınla
+        id: deployment
+        uses: actions/deploy-pages@v5
