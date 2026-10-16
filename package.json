@@ -7,6 +7,7 @@
     "test": "playwright test",
     "test:smoke": "playwright test --grep @smoke",
     "test:bugs": "playwright test --grep @known-bug",
+    "test:visual": "playwright test --grep @visual",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
     "report": "playwright show-report",
