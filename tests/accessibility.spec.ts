@@ -1,6 +1,7 @@
 import { test, expect } from '../src/fixtures';
 import { KNOWN_VIOLATIONS } from '../src/data/a11y-known';
 import { scanA11y, summarize } from '../src/utils/a11y';
+
 test.describe('Erişilebilirlik (WCAG 2.1 AA + best practice)', { tag: '@a11y' }, () => {
   test.describe('oturum olmadan', () => {
     test.use({ storageState: { cookies: [], origins: [] } });
